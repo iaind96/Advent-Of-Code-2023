@@ -24,6 +24,13 @@ namespace Day1
 
         static void Main(string[] args)
         {
+            //string s = "blahregexblah";
+            //string pattern = @"(?=(regex))regex";
+            string s = "1 turkey costs 30€";
+            string pattern = @"\d+(?=(€|kr))";
+            Match match = Regex.Match(s, pattern);
+
+
             List<string> inputs = ReadInput(inputFilepath);
 
             PartOne(inputs);
@@ -107,18 +114,22 @@ namespace Day1
             int calibrationValueSum = 0;
 
             string writtenDigitPattern = string.Join('|', digitMapping.Keys);
-
             string singleDigitPattern = @"\d";
-
             string digitPattern = singleDigitPattern + "|" + writtenDigitPattern;
 
             foreach (string input in inputs)
             {
-                MatchCollection matches = Regex.Matches(input, digitPattern);
+                //MatchCollection matches = Regex.Matches(input, $"(?=({digitPattern}))");
+                MatchCollection matches = Regex.Matches("5qfneight7bhhnine8eightoneightfrx", $"(?=({digitPattern}))");
+                //MatchCollection matches = Regex.Matches("5qfneight7bhhnine8eightoneightfrx", $"(?={digitPattern}){digitPattern}");
+                //MatchCollection matches = Regex.Matches("5qfneight7bhhnine8eightoneightfrx", digitPattern);
+
+                //matches[0].Groups[0].Value
 
                 if (matches.Count > 0)
                 {
-                    string calibrationValueAsString = ParseMatchToSingleDigit(matches[0].Value) + ParseMatchToSingleDigit(matches[matches.Count - 1].Value);
+
+                    string calibrationValueAsString = ParseMatchToSingleDigit(matches[0].Groups[1].Value) + ParseMatchToSingleDigit(matches[matches.Count - 1].Groups[1].Value);
 
                     calibrationValueSum += int.Parse(calibrationValueAsString);
                 }
