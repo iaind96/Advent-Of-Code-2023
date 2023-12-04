@@ -12,6 +12,7 @@
             List<Input> inputs = ReadInput(inputFilepath);
 
             PartOne(inputs);
+            PartTwo(inputs);
         }
 
         private static List<Input> ReadInput(string inputFilepath)
@@ -49,14 +50,38 @@
 
                 if (winningNumberCount > 0)
                 {
-                    double x = Math.Max(0, winningNumberCount - 1);
-                    int points = (int)Math.Pow(2.0, Math.Max(0, winningNumberCount - 1));
-
+                    int points = (int)Math.Pow(2, Math.Max(0, winningNumberCount - 1));
                     totalPoints += points;
                 }
             }
 
             Console.WriteLine($"Part one: Total points = {totalPoints}");
+        }
+
+        private static void PartTwo(List<Input> inputs)
+        {
+            List<int> cardScores = new List<int>();
+
+            foreach (Input input in inputs)
+            {
+                cardScores.Add(input.WinningNumbers.Where(winningNumber => input.ChosenNumbers.Contains(winningNumber)).Count());
+            }
+
+            int[] cardCounts = new int[cardScores.Count()];
+            for (int index = 0; index < cardScores.Count(); index++)
+            {
+                // original card
+                cardCounts[index] += 1;
+
+                for (int offset = 1; index + offset < cardScores.Count() && offset < cardScores[index] + 1; offset++)
+                {
+                    cardCounts[index + offset] += cardCounts[index];
+                }
+            }
+
+            int totalCards = cardCounts.Sum();
+
+            Console.WriteLine($"Part two: Total cards = {totalCards}");
         }
     }
 }
