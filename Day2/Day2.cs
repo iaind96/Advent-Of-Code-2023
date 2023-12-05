@@ -102,7 +102,25 @@
 
         private static void PartTwo(List<Input> inputs)
         {
+            int totalPower = 0;
 
+            foreach (Input input in inputs)
+            {
+                Draw minDraw = new Draw(0, 0, 0);
+
+                foreach (Draw draw in input.Draws)
+                {
+                    minDraw.Red = Math.Max(minDraw.Red, draw.Red);
+                    minDraw.Green = Math.Max(minDraw.Green, draw.Green);
+                    minDraw.Blue = Math.Max(minDraw.Blue, draw.Blue);
+                }
+
+                int gamePower = minDraw.Red * minDraw.Green * minDraw.Blue;
+
+                totalPower += gamePower;
+            }
+
+            Console.WriteLine($"Part two: Total power = {totalPower}");
         }
     }
 }
