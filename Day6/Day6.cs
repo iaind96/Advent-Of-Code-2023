@@ -53,6 +53,7 @@
 
             foreach (Race race in races)
             {
+                // add small perturbations for when solutions are integer
                 double chargeTimeMinUnrounded = (race.Time - Math.Sqrt(race.Time * race.Time - 4 * race.RecordDistance)) / 2 + 1e-8;
                 double chargeTimeMaxUnrounded = (race.Time + Math.Sqrt(race.Time * race.Time - 4 * race.RecordDistance)) / 2 - 1e-8;
 
@@ -66,15 +67,16 @@
 
             Console.WriteLine($"Part one: Winning times product = {winningTimesProduct}");
 
-            //foreach (Race race in races)
-            //{
-            //    RaceLong raceLong = new RaceLong(race.Time, race.RecordDistance);
-            //    PartTwo(raceLong);
-            //}
+            foreach (Race race in races)
+            {
+                RaceLong raceLong = new RaceLong(race.Time, race.RecordDistance);
+                PartTwoBinarySearch(raceLong);
+            }
         }
 
         private static void PartTwo(RaceLong race)
         {
+            // add small perturbations for when solutions are integer
             double chargeTimeMinUnrounded = (race.Time - Math.Sqrt(race.Time * race.Time - 4 * race.RecordDistance)) / 2 + 1e-8;
             double chargeTimeMaxUnrounded = (race.Time + Math.Sqrt(race.Time * race.Time - 4 * race.RecordDistance)) / 2 - 1e-8;
 
@@ -104,15 +106,15 @@
                     // don't move the right boundary below the midpoint since the solution might be non-integer
                     searchRight = midPoint;
                 }
-                else if (distanceTravelled < race.RecordDistance)
+                else if (distanceTravelled <= race.RecordDistance)
                 {
                     searchLeft = midPoint + 1;
                 }
-                // stopping condition if the solution is integer
-                else if (searchLeft == searchRight - 1)
-                {
-                    break;
-                }
+                //// stopping condition if the solution is integer
+                //else if (searchLeft == searchRight - 1)
+                //{
+                //    break;
+                //}
             }
 
             // determine the total number of winning times
