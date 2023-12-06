@@ -11,7 +11,7 @@
 
         static void Main(string[] args)
         {
-            List<Race> inputs = ReadInput(inputFilepathExample);
+            List<Race> inputs = ReadInput(inputFilepath);
             PartOne(inputs);
 
             RaceLong input = ReadInputPartTwo(inputFilepath);
@@ -64,6 +64,12 @@
             }
 
             Console.WriteLine($"Part one: Winning times product = {winningTimesProduct}");
+
+            //foreach (Race race in races)
+            //{
+            //    RaceLong raceLong = new RaceLong(race.Time, race.RecordDistance);
+            //    PartTwo(raceLong);
+            //}
         }
 
         private static void PartTwo(RaceLong race)
@@ -87,6 +93,11 @@
                 else if (distanceTravelled < race.RecordDistance)
                 {
                     searchLeft = midPoint + 1;
+                }
+                // stopping condition if the solution is integer
+                else if (searchLeft == searchRight - 1)
+                {
+                    break;
                 }
             }
 
