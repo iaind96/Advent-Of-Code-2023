@@ -16,6 +16,7 @@
 
             RaceLong input = ReadInputPartTwo(inputFilepath);
             PartTwo(input);
+            //PartTwoBinarySearch(input);
         }
 
         private static List<Race> ReadInput(string inputFilepath)
@@ -73,6 +74,19 @@
         }
 
         private static void PartTwo(RaceLong race)
+        {
+            double chargeTimeMinUnrounded = (race.Time - Math.Sqrt(race.Time * race.Time - 4 * race.RecordDistance)) / 2 + 1e-8;
+            double chargeTimeMaxUnrounded = (race.Time + Math.Sqrt(race.Time * race.Time - 4 * race.RecordDistance)) / 2 - 1e-8;
+
+            int chargeTimeMin = (int)(chargeTimeMinUnrounded + 1);
+            int chargeTimeMax = (int)chargeTimeMaxUnrounded;
+
+            int numberWinningTimes = chargeTimeMax - chargeTimeMin + 1;
+
+            Console.WriteLine($"Part two: Number of winning times = {numberWinningTimes}");
+        }
+
+        private static void PartTwoBinarySearch(RaceLong race)
         {
             long searchLeft = 0;
             long searchRight = race.Time / 2;
