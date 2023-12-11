@@ -12,10 +12,35 @@ namespace Day11
         private class GalaxyMap
         {
             private List<List<char>> characterArray;
+
+            private List<int> rowIndicesToExpand;
+            private List<int> columnIndicesToExpand;
             
             public GalaxyMap(List<List<char>> characterArray)
             {
-                this.characterArray = characterArray;
+                this.characterArray = characterArray.Select(x => x.ToList()).ToList();
+
+                // first find rows to expand
+                rowIndicesToExpand = new List<int>();
+                for (int i = 0; i < characterArray.Count; i++)
+                {
+                    List<char> row = characterArray[i];
+                    if (row.All(x => x == '.'))
+                    {
+                        rowIndicesToExpand.Add(i);
+                    }
+                }
+
+                // now find columns to expand
+                columnIndicesToExpand = new List<int>();
+                for (int i = 0; i < characterArray[0].Count; i++)
+                {
+                    List<char> column = characterArray.Select(x => x[i]).ToList();
+                    if (column.All(x => x == '.'))
+                    {
+                        columnIndicesToExpand.Add(i);
+                    }
+                }
             }
 
             public List<Coordinate> FindGalaxies()
@@ -38,40 +63,18 @@ namespace Day11
 
             public void ExpandMap()
             {
-                // first expand rows
-                List<int> rowIndicesToInsert = new List<int>();
-                for (int i = 0; i < characterArray.Count; i++)
-                {
-                    List<char> row = characterArray[i];
-                    if (row.All(x => x == '.'))
-                    {
-                        rowIndicesToInsert.Add(i);
-                    }
-                }
-
                 int mapWidth = characterArray[0].Count;
                 List<char> emptyRow = Enumerable.Repeat('.', mapWidth).ToList();
 
                 int insertedRows = 0;
-                foreach (int index in rowIndicesToInsert)
+                foreach (int index in rowIndicesToExpand)
                 {
                     characterArray.Insert(index + insertedRows, emptyRow.ToList());
                     insertedRows++;
                 }
 
-                // now expand columns
-                List<int> columnIndicesToInsert = new List<int>();
-                for (int i = 0; i < characterArray[0].Count; i++)
-                {
-                    List<char> column = characterArray.Select(x => x[i]).ToList();
-                    if (column.All(x => x == '.'))
-                    {
-                        columnIndicesToInsert.Add(i);
-                    }
-                }
-
                 int insertedColumns = 0;
-                foreach (int index in columnIndicesToInsert)
+                foreach (int index in columnIndicesToExpand)
                 {
                     foreach (List<char> row in characterArray)
                     {
@@ -80,22 +83,35 @@ namespace Day11
                     insertedColumns++;
                 }
             }
+
+            public long ShortestDistance(Coordinate a, Coordinate b, int expansionFactor)
+            {
+                int shortestDistanceWithoutExpansion = Math.Abs(a.Row - b.Row) + Math.Abs(a.Column - b.Column);
+
+                int minRow = Math.Min(a.Row, b.Row);
+                int maxRow = Math.Max(a.Row, b.Row);
+                int minColumn = Math.Min(a.Column, b.Column);
+                int maxColumn = Math.Max(a.Column, b.Column);
+
+                int numberOfRowsToExpand = rowIndicesToExpand.Where(x => x > minRow && x < maxRow).Count();
+                int numberColumnsToExpand = columnIndicesToExpand.Where(x => x > minColumn && x < maxColumn).Count();
+
+                return shortestDistanceWithoutExpansion + (numberOfRowsToExpand + numberColumnsToExpand) * (expansionFactor - 1);
+            }
         }
 
         static void Main(string[] args)
         {
-            GalaxyMap input = ReadInput(inputFilepath);
+            List<List<char>> input = ReadInput(inputFilepath);
 
-            PartOne(input);
-            PartTwo(input);
+            PartOne(new GalaxyMap(input));
+            PartTwo(new GalaxyMap(input));
         }
 
-        private static GalaxyMap ReadInput(string inputFilepath)
+        private static List<List<char>> ReadInput(string inputFilepath)
         {
             List<List<char>> lines = File.ReadLines(inputFilepath).Select(x => x.ToList()).ToList();
-
-            GalaxyMap galaxyMap = new GalaxyMap(lines);
-            return galaxyMap;
+            return lines;
         }
 
         private static int ShortestDistance(Coordinate a, Coordinate b)
@@ -122,7 +138,19 @@ namespace Day11
 
         private static void PartTwo(GalaxyMap input)
         {
+            List<Coordinate> galaxies = input.FindGalaxies();
 
+            long shortestDistanceSum = 0;
+            for (int i = 0; i < galaxies.Count; i++)
+            {
+                for (int j = i + 1; j < galaxies.Count; j++)
+                {
+                    shortestDistanceSum += input.ShortestDistance(galaxies[i], galaxies[j], 1_000_000);
+                }
+            }
+
+            Console.WriteLine($"Part one: Shortest distance sum = {shortestDistanceSum}");
         }
     }
+
 }
