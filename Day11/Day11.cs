@@ -149,7 +149,7 @@ namespace Day11
                 }
             }
 
-            Console.WriteLine($"Part one: Shortest distance sum = {shortestDistanceSum}");
+            Console.WriteLine($"Part two: Shortest distance sum = {shortestDistanceSum}");
         }
     }
 
